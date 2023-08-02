@@ -1,0 +1,20 @@
+1. Steps on Subquery:First, we needed to group by the day and channel. Then ordering by the number of events (the third column) gave us a quick way to answer the first question.Here you can see that to get the entire table in question 1 back, we included an * in our* SELECT* statement. You will need to be sure to alias your table.Finally, here we are able to get a table that shows the average number of events a day for each channel.
+--ANS.-
+SELECT channel, AVG(events) AS average_events
+FROM (SELECT DATE_TRUNC('day',occurred_at) AS day,
+                channel, COUNT(*) as events
+         FROM web_events 
+         GROUP BY 1,2) sub
+GROUP BY channel
+ORDER BY 2 DESC;
+2.  pull the first month/year combo from the orders table.Then to pull the average for each, we could do this all in one query, but for readability, I provided two queries below to perform each separately.
+ANS.--
+SELECT AVG(standard_qty) avg_std, AVG(gloss_qty) avg_gls, AVG(poster_qty) avg_pst
+FROM orders
+WHERE DATE_TRUNC('month', occurred_at) = 
+     (SELECT DATE_TRUNC('month', MIN(occurred_at)) FROM orders);
+
+SELECT SUM(total_amt_usd)
+FROM orders
+WHERE DATE_TRUNC('month', occurred_at) = 
+      (SELECT DATE_TRUNC('month', MIN(occurred_at)) FROM orders);
